@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const Card = require("../models/movie");
 const ForbiddenError = require("../errors/forbiddenError");
 const NotFoundError = require("../errors/notFoundError");

@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -9,7 +10,6 @@ const ValidationError = require("../errors/validationError");
 const AuthError = require("../errors/authError");
 const NotFoundError = require("../errors/notFoundError");
 
-//Нужно ли ???
 const getUsers = (req, res, next) => {
   User.find()
     .then((users) => res.status(200).send(users))
@@ -46,7 +46,7 @@ const createUsers = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         next(
-          new ConflictError("Пользователь с данным email уже зарегистрирован")
+          new ConflictError("Пользователь с данным email уже зарегистрирован"),
         );
       } else {
         next(err);
