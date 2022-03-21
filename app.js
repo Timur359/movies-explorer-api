@@ -39,14 +39,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(apiLogger);
 
-app.get("/crash-test", () => {
+app.get("/api/crash-test", () => {
   setTimeout(() => {
     throw new Error("Сервер сейчас упадёт");
   }, 0);
 });
 
 app.post(
-  "/signup",
+  "/api/signup",
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
@@ -57,7 +57,7 @@ app.post(
   createUsers,
 );
 app.post(
-  "/signin",
+  "/api/signin",
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
@@ -67,8 +67,8 @@ app.post(
   loginUser,
 );
 
-app.use("/", auth, usersRoutes);
-app.use("/", auth, moviesRoutes);
+app.use("/api/", auth, usersRoutes);
+app.use("/api/", auth, moviesRoutes);
 app.use("*", auth, (req, res, next) => {
   next(new NotFoundError("Страница не найдена"));
 });
