@@ -1,0 +1,8 @@
+{
+  "printWidth": 80, // длина строки - 80
+  "singleQuote": true, // использовать одинарные кавычки - да!
+  "trailingComma": "es5", // запятая в последней строке - да
+  "jsxBracketSameLine": false, // закрывающийся jsx в этой же строке
+  "parser": "flow", // парсер - flow (пока не важно)
+  "semi": false // точка с запятой - нет
+}
