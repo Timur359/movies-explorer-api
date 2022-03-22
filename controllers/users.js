@@ -1,14 +1,13 @@
-/* eslint-disable consistent-return */
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const { NODE_ENV, JWT_SECRET_KEY } = process.env;
 
-const User = require("../models/user");
-const ConflictError = require("../errors/conflictError");
-const ValidationError = require("../errors/validationError");
-const AuthError = require("../errors/authError");
-const NotFoundError = require("../errors/notFoundError");
+const User = require('../models/user');
+const ConflictError = require('../errors/conflictError');
+const ValidationError = require('../errors/validationError');
+const AuthError = require('../errors/authError');
+const NotFoundError = require('../errors/notFoundError');
 
 const getUsers = (req, res, next) => {
   User.find()
@@ -20,7 +19,7 @@ const getMyProfile = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError("Данные пользователя не найдены"));
+        next(new NotFoundError('Данные пользователя не найдены'));
       } else {
         res.status(200).send(user);
       }
@@ -31,7 +30,7 @@ const getMyProfile = (req, res, next) => {
 const createUsers = (req, res, next) => {
   const { name, email, password } = req.body;
   if (!email || !password) {
-    return next(new ValidationError("Не переданы email или пароль"));
+    next(new ValidationError('Не переданы email или пароль'));
   }
   bcrypt
     .hash(password, 10)
@@ -45,9 +44,7 @@ const createUsers = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        next(
-          new ConflictError("Пользователь с данным email уже зарегистрирован"),
-        );
+        next(new ConflictError('Пользователь с данным email уже зарегистрирован'));
       } else {
         next(err);
       }
@@ -57,32 +54,24 @@ const createUsers = (req, res, next) => {
 const loginUser = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return next(new ValidationError("Неверный пароль или email!"));
+    next(new ValidationError('Неверный пароль или email!'));
   }
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === "production" ? JWT_SECRET_KEY : "dev-secret",
-        { expiresIn: "7d" },
-      );
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET_KEY : 'dev-secret', { expiresIn: '7d' });
       return res.status(200).send({ token });
     })
     .catch(() => {
-      next(new AuthError("Неверный логин или пароль"));
+      next(new AuthError('Неверный логин или пароль'));
     });
 };
 
 const editUserProfile = (req, res, next) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(
-    req.user._id,
-    { name, about },
-    { new: true, runValidators: true },
-  )
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        next(new ValidationError("Переданы не корректные данные"));
+        next(new ValidationError('Переданы не корректные данные'));
       } else {
         res.status(200).send(user);
       }

@@ -1,19 +1,15 @@
-const express = require("express");
-const { celebrate, Joi } = require("celebrate");
+const express = require('express');
+const { celebrate, Joi } = require('celebrate');
 
 const router = express.Router();
 
-const {
-  getMovies,
-  createMovies,
-  deleteMovies,
-} = require("../controllers/movies");
+const { getMovies, createMovies, deleteMovies } = require('../controllers/movies');
 
 const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]+\.[a-zA-Z0-9()]+([-a-zA-Z0-9()@:%_\\+.~#?&/=#]*)/;
 
-router.get("/movies", getMovies);
+router.get('/movies', getMovies);
 router.post(
-  "/movies",
+  '/movies',
   celebrate({
     body: Joi.object().keys({
       country: Joi.string().required(),
@@ -33,7 +29,7 @@ router.post(
 );
 
 router.delete(
-  "/movies/:moviesId",
+  '/movies/:moviesId',
   celebrate({
     params: Joi.object().keys({
       moviesId: Joi.string().required().length(24).hex(),

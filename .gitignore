@@ -8,10 +8,8 @@ node_modules
 
 # Optional npm cache directory
 .npm
-*.env
-.env
 package-lock.json
-.prettierrc.json
+.prettierrc
 
 # Optional REPL history
 .DS_Store

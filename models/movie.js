@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]+\.[a-zA-Z0-9()]+([-a-zA-Z0-9()@:%_\\+.~#?&/=#]*)/;
 
@@ -27,31 +27,31 @@ const movieSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: (v) => regex.test(v),
-      message: "Введите корректную ссылку на картинку !",
+      message: 'Введите корректную ссылку на картинку !',
     },
   },
   trailerLink: {
     type: String,
     validate: {
       validator: (v) => regex.test(v),
-      message: "Введите корректную ссылку на видео !",
+      message: 'Введите корректную ссылку на видео !',
     },
   },
   thumbnail: {
     type: String,
     validate: {
       validator: (v) => regex.test(v),
-      message: "Введите корректную ссылку на картинку !",
+      message: 'Введите корректную ссылку на картинку !',
     },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: 'user',
     required: true,
   },
   movieId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "movie",
+    ref: 'movie',
     required: true,
   },
   nameRU: {
@@ -64,4 +64,4 @@ const movieSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("movie", movieSchema);
+module.exports = mongoose.model('movie', movieSchema);
