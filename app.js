@@ -84,5 +84,3 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Listening port ${PORT}`);
 });
-
-console.log(process.env.JWT_SECRET_KEY);
