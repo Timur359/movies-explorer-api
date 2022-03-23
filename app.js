@@ -4,6 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
+const helmet = require('helmet');
 const cors = require('cors');
 
 const rateLimiter = require('./middlewares/rateLimit');
@@ -13,6 +14,7 @@ const auth = require('./middlewares/auth');
 const { apiLogger, errLogger } = require('./middlewares/logger');
 const { createUsers, loginUser } = require('./controllers/users');
 const NotFoundError = require('./errors/notFoundError');
+const errorHandler = require('./errors/errorHandler');
 
 const app = express();
 
@@ -36,16 +38,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(apiLogger);
 
+app.use(helmet());
+
 app.use(rateLimiter);
 
-app.get('/crash-test', () => {
+app.get('/api/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
 });
 
 app.post(
-  '/signup',
+  '/api/signup',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
@@ -56,7 +60,7 @@ app.post(
   createUsers,
 );
 app.post(
-  '/signin',
+  '/api/signin',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
@@ -66,24 +70,19 @@ app.post(
   loginUser,
 );
 
-app.use('/', auth, usersRoutes);
-app.use('/', auth, moviesRoutes);
-app.use('*', auth, (req, res, next) => {
+app.use('/api/', auth, usersRoutes);
+app.use('/api/', auth, moviesRoutes);
+app.use('/*', auth, (req, res, next) => {
   next(new NotFoundError('Страница не найдена'));
 });
 
 app.use(errLogger);
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  const { message } = err;
-  const statusCode = err.statusCode || 500;
-  res.status(statusCode).send({
-    message: statusCode === 500 ? 'Произошла ошибка на сервере' : message,
-  });
-  next();
-});
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Listening port ${PORT}`);
 });
+
+console.log(process.env.JWT_SECRET_KEY);
