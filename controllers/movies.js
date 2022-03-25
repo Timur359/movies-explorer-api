@@ -1,38 +1,34 @@
-const Card = require('../models/movie');
+const Movie = require('../models/movie');
 const ForbiddenError = require('../errors/forbiddenError');
 const NotFoundError = require('../errors/notFoundError');
 const ValidationError = require('../errors/validationError');
 
 const getMovies = (req, res, next) => {
-  Card.find()
-    .then((cards) => res.status(200).send(cards))
-    .catch((err) => next(err));
+  Movie.find()
+    .then((movies) => res.send(movies))
+    .catch(next);
 };
 
 const createMovies = (req, res, next) => {
-  const { name, link } = req.body;
   const owner = req.user._id;
-  const movieId = req.user._id;
-  Card.create({
-    name,
-    link,
+  Movie.create({
     owner,
-    movieId,
+    ...req.body,
   })
-    .then((card) => res.status(200).send(card))
-    .catch((err) => next(new ValidationError(err)));
+    .then((movie) => res.send(movie))
+    .catch(() => next(new ValidationError('Необходимо заполнить все поля корректно')));
 };
 
 const deleteMovies = (req, res, next) => {
   const owner = req.user._id;
-  Card.findOne({ _id: req.params.moviesId })
+  Movie.findOne({ _id: req.params.moviesId })
     .orFail(() => new NotFoundError('Карточка не найдена'))
-    .then(async (card) => {
-      if (!card.owner.equals(owner)) {
+    .then(async (movie) => {
+      if (!movie.owner.equals(owner)) {
         next(new ForbiddenError('Нет прав на удаление этой карточки'));
       } else {
-        await Card.deleteOne(card);
-        res.status(200).send({ message: 'Карточка удалена' });
+        await Movie.deleteOne(movie);
+        res.send({ message: 'Карточка удалена' });
       }
     })
     .catch((err) => {
@@ -49,3 +45,14 @@ module.exports = {
   createMovies,
   deleteMovies,
 };
+
+/* country,
+director,
+duration,
+year,
+descrtiption,
+image,
+trailerLink,
+thumbnail,
+nameRU,
+nameEN, */

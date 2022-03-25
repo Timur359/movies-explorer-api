@@ -11,8 +11,8 @@ const NotFoundError = require('../errors/notFoundError');
 
 const getUsers = (req, res, next) => {
   User.find()
-    .then((users) => res.status(200).send(users))
-    .catch((err) => next(err));
+    .then((users) => res.send(users))
+    .catch(next);
 };
 
 const getMyProfile = (req, res, next) => {
@@ -21,10 +21,10 @@ const getMyProfile = (req, res, next) => {
       if (!user) {
         next(new NotFoundError('Данные пользователя не найдены'));
       } else {
-        res.status(200).send(user);
+        res.send(user);
       }
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 const createUsers = (req, res, next) => {
@@ -40,7 +40,7 @@ const createUsers = (req, res, next) => {
       password: hash,
     }))
     .then((user) => {
-      res.status(200).send({ data: `${user.name}` });
+      res.send({ data: `${user.name}` });
     })
     .catch((err) => {
       if (err.code === 11000) {
@@ -59,24 +59,22 @@ const loginUser = (req, res, next) => {
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET_KEY : 'dev-secret', { expiresIn: '7d' });
-      return res.status(200).send({ token });
+      return res.send({ token });
     })
-    .catch(() => {
-      next(new AuthError('Неверный логин или пароль'));
-    });
+    .catch(() => next(new AuthError('Неверный логин или пароль')));
 };
 
 const editUserProfile = (req, res, next) => {
-  const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+  const { name, email } = req.body;
+  User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         next(new ValidationError('Переданы не корректные данные'));
       } else {
-        res.status(200).send(user);
+        res.send(user);
       }
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 module.exports = {
