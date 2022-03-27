@@ -22,18 +22,18 @@ const createMovies = (req, res, next) => {
 const deleteMovies = (req, res, next) => {
   const owner = req.user._id;
   Movie.findOne({ _id: req.params.moviesId })
-    .orFail(() => new NotFoundError('Карточка не найдена'))
+    .orFail(() => new NotFoundError('Фильм не найдена'))
     .then(async (movie) => {
       if (!movie.owner.equals(owner)) {
-        next(new ForbiddenError('Нет прав на удаление этой карточки'));
+        next(new ForbiddenError('Нет прав на удаление этого фильма'));
       } else {
         await Movie.deleteOne(movie);
-        res.send({ message: 'Карточка удалена' });
+        res.send({ message: 'Фильм удален' });
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError('Невалидный id карточки'));
+        next(new ValidationError('Невалидный id фильма'));
       } else {
         next(err);
       }
@@ -45,14 +45,3 @@ module.exports = {
   createMovies,
   deleteMovies,
 };
-
-/* country,
-director,
-duration,
-year,
-descrtiption,
-image,
-trailerLink,
-thumbnail,
-nameRU,
-nameEN, */
