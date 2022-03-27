@@ -53,9 +53,6 @@ const createUsers = (req, res, next) => {
 
 const loginUser = (req, res, next) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    next(new ValidationError('Неверный пароль или email!'));
-  }
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET_KEY : 'dev-secret', { expiresIn: '7d' });
@@ -68,13 +65,14 @@ const editUserProfile = (req, res, next) => {
   const { name, email } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
     .then((user) => {
-      if (!user) {
-        next(new ValidationError('Переданы не корректные данные'));
+      res.send(user);
+    }).catch((err) => {
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь с данным email уже зарегистрирован'));
       } else {
-        res.send(user);
+        next(err);
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports = {

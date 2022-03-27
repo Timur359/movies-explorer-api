@@ -18,11 +18,10 @@ const router = require('./routes/index');
 
 const app = express();
 
-const { PORT = 3000 } = process.env;
-const db = 'mongodb://localhost:27017/bitfilmsdb';
+const { PORT = 3000, MONGO_URL = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
 
 mongoose
-  .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to DB'))
   .catch((error) => console.log(error));
 
