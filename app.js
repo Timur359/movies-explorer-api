@@ -40,7 +40,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//app.use(apiLogger);
+app.use(apiLogger);
 
 app.use(rateLimiter);
 
@@ -60,7 +60,7 @@ app.use("/*", auth, (req, res, next) => {
   next(new NotFoundError("Страница не найдена"));
 });
 
-//app.use(errLogger);
+app.use(errLogger);
 app.use(errors());
 
 app.use(errorHandler);
