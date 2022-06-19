@@ -28,8 +28,8 @@ mongoose
 
 const whitelist = [
   "http://localhost:3000",
-  "https://movies-explorer-dip.nomoredomains.work",
-  "http://movies-explorer-dip.nomoredomains.work",
+  "https://movies-explorer-dip.nomoredomains.xyz",
+  "http://movies-explorer-dip.nomoredomains.xyz",
 ];
 const corsOptions = {
   origin: whitelist,
