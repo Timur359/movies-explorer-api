@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 
 const { NODE_ENV, JWT_SECRET_KEY } = process.env;
 
+NODE_ENV === "production" ? JWT_SECRET_KEY : "dev-secret"
+
 const User = require('../models/user');
 const ConflictError = require('../errors/conflictError');
 const ValidationError = require('../errors/validationError');

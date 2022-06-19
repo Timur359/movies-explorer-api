@@ -3,13 +3,11 @@ const ForbiddenError = require("../errors/forbiddenError");
 const NotFoundError = require("../errors/notFoundError");
 const ValidationError = require("../errors/validationError");
 
-const { NODE_ENV } = process.env;
-
 const getMovies = (req, res, next) => {
-  Movie.find()
-    .then((movies) => {
-      res.send(movies);
-      console.log(process.env.NODE_ENV);
+  Movie.find({ owner: req.user._id })
+    .orFail(() => new NotFoundError("Нет фильмов в избранном."))
+    .then((movie) => {
+      res.send(movie);
     })
     .catch(next);
 };
@@ -35,7 +33,7 @@ const deleteMovies = (req, res, next) => {
         next(new ForbiddenError("Нет прав на удаление этого фильма"));
       } else {
         await Movie.deleteOne(movie);
-        res.send({ message: "Фильм удален" });
+        res.send(movie);
       }
     })
     .catch((err) => {
