@@ -35,7 +35,7 @@ const corsOptions = {
   origin: whitelist,
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
